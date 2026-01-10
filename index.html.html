@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Digital Nest - Voucher Pro Max</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', 'Pyidaungsu', sans-serif;
+            background-color: #f1f5f9;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 90px;
+        }
+
+        /* --- THEME VARIABLES (Dynamic) --- */
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #0284c7;
+            --accent: #e0f2fe;
+            --text-main: #0f172a;
+        }
+
+        /* --- 10 PREMIUM DUAL TONE THEMES --- */
+        .theme-royal-gold { --primary: #1e3a8a; --secondary: #b45309; --accent: #fffbeb; --text-main: #172554; }
+        .theme-midnight-purple { --primary: #581c87; --secondary: #db2777; --accent: #fdf4ff; --text-main: #3b0764; }
+        .theme-nature-fresh { --primary: #065f46; --secondary: #65a30d; --accent: #f0fdf4; --text-main: #064e3b; }
+        .theme-sunset-glow { --primary: #c2410c; --secondary: #f59e0b; --accent: #fff7ed; --text-main: #7c2d12; }
+        .theme-ocean-breeze { --primary: #0e7490; --secondary: #22d3ee; --accent: #ecfeff; --text-main: #164e63; }
+        .theme-crimson-night { --primary: #7f1d1d; --secondary: #1f2937; --accent: #fef2f2; --text-main: #450a0a; }
+        .theme-berry-smoothie { --primary: #be185d; --secondary: #4338ca; --accent: #fdf2f8; --text-main: #831843; }
+        .theme-slate-stone { --primary: #334155; --secondary: #64748b; --accent: #f8fafc; --text-main: #0f172a; }
+        .theme-lemon-lime { --primary: #65a30d; --secondary: #ca8a04; --accent: #f7fee7; --text-main: #3f6212; }
+        .theme-coffee-bean { --primary: #78350f; --secondary: #92400e; --accent: #fffbeb; --text-main: #451a03; }
+        
+        /* Custom Theme Class (Uses JS injected vars) */
+        .theme-custom { /* Variables set via inline style on element */ }
+
+        /* Common Voucher Styles */
+        .voucher-preview {
+            color: var(--text-main);
+            background-color: white;
+            transition: all 0.3s ease;
+            min-width: 700px; /* Fixed width for consistent generation */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .text-theme-p { color: var(--primary); }
+        .text-theme-s { color: var(--secondary); }
+        .bg-theme-p { background-color: var(--primary); }
+        .bg-theme-s { background-color: var(--secondary); }
+        .bg-theme-a { background-color: var(--accent); }
+        .border-theme-p { border-color: var(--primary); }
+        .border-theme-s { border-color: var(--secondary); }
+        
+        /* --- LAYOUT DEFINITIONS --- */
+        
+        /* L1: Standard Classic */
+        .layout-1 .v-header { border-bottom: 3px solid var(--primary); padding-bottom: 1.5rem; }
+
+        /* L2: Modern Gradient */
+        .layout-2 .v-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin: -2rem -2rem 1.5rem -2rem; padding: 2.5rem; }
+        .layout-2 .v-header h1, .layout-2 .v-header p, .layout-2 .v-header span { color: white !important; opacity: 0.95; }
+        .layout-2 .v-header .logo-box { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+
+        /* L3: Split Background */
+        .layout-3 .v-header { background-color: var(--accent); margin: -2rem -2rem 1.5rem -2rem; padding: 2rem; border-bottom: 4px solid var(--secondary); display: flex; align-items: center; }
+        .layout-3 .logo-box { background: transparent; border: 2px solid var(--primary); }
+
+        /* L4: Minimal Right Aligned */
+        .layout-4 .v-header { flex-direction: row-reverse; text-align: right; border-bottom: 1px dashed #cbd5e1; padding-bottom: 1rem; }
+        .layout-4 .logo-box { margin-left: auto; margin-right: 0; }
+        .layout-4 .v-meta { text-align: left; padding-left: 0; padding-right: 1rem; border-right: 2px solid var(--primary); border-left: none; }
+
+        /* L5: Dual Bold Bars */
+        .layout-5 .v-header { border-top: 12px solid var(--primary); border-bottom: 6px solid var(--secondary); padding: 1.5rem 0; margin-top: -2rem; }
+
+        /* L6: Curved Header */
+        .layout-6 .v-header { position: relative; padding-bottom: 3rem; margin-bottom: 1rem; }
+        .layout-6-curve {
+            position: absolute; top: 0; left: 0; right: 0; height: 180px;
+            background: var(--primary);
+            border-bottom-left-radius: 50% 20%;
+            border-bottom-right-radius: 50% 20%;
+            z-index: 0;
+            margin: -2rem -2rem 0 -2rem;
+        }
+        .layout-6 .v-header * { position: relative; z-index: 10; }
+        .layout-6 .preview-biz-name, .layout-6 .preview-no { color: white !important; }
+        .layout-6 .v-meta p { color: white !important; opacity: 0.9; }
+
+        /* Scroll Area */
+        .voucher-scroll-area { overflow-x: auto; padding: 10px 0; }
+
+        /* Loader & Auth */
+        #loading-overlay, #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: flex; justify-content: center; align-items: center;
+        }
+        #loading-overlay { background: rgba(0,0,0,0.8); color: white; display: none; flex-direction: column; gap: 1rem; }
+        #auth-screen { background: #f8fafc; z-index: 1500; }
+
+        .nav-item.active { color: var(--primary); transform: translateY(-2px); }
+
+        /* Animations */
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        
+        /* Icon Utility */
+        .icon { width: 1.25em; height: 1.25em; display: inline-block; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+        <div id="loading-text" class="font-bold">Processing...</div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md mx-4 border-t-4 border-blue-500 animate-fade-in">
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-200 transform -rotate-3 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17V7"/></svg>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-800">Modern Voucher</h1>
+                <p class="text-slate-500 text-sm mt-1 font-medium">Pro Max Edition</p>
+            </div>
+
+            <!-- Login -->
+            <div id="login-form" class="space-y-4">
+                <input type="text" id="login-username" placeholder="Username / Phone" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none transition">
+                <input type="password" id="login-password" placeholder="Password" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none transition">
+                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-200">
+                    Log In
+                </button>
+                <p class="text-center text-sm text-slate-500 mt-4 cursor-pointer hover:text-blue-600" onclick="toggleAuthMode()">
+                    အကောင့်မရှိသေးဘူးလား? <b>အကောင့်သစ်ဖွင့်ရန်</b>
+                </p>
+            </div>
+
+            <!-- Signup -->
+            <div id="signup-form" class="space-y-4 hidden">
+                <input type="text" id="signup-username" placeholder="Username (အမည်)" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:border-green-500 outline-none">
+                <input type="password" id="signup-password" placeholder="Password (စကားဝှက်)" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:border-green-500 outline-none">
+                <button onclick="handleSignup()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-green-200">
+                    Sign Up
+                </button>
+                <p class="text-center text-sm text-slate-500 mt-4 cursor-pointer hover:text-green-600" onclick="toggleAuthMode()">
+                    အကောင့်ရှိပြီးသားလား? <b>Log In ဝင်ရန်</b>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app-content" class="hidden">
+        
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">D</div>
+                <div class="leading-tight">
+                    <span class="font-bold text-slate-800 block text-sm" id="header-username">User</span>
+                    <span class="text-[10px] text-slate-500">Voucher Pro Max</span>
+                </div>
+            </div>
+            <button onclick="handleLogout()" class="text-slate-400 hover:text-red-500 transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            </button>
+        </header>
+
+        <main class="max-w-6xl mx-auto p-4 md:p-6 pb-24">
+
+            <!-- PAGE: GENERATOR -->
+            <div id="page-generator" class="page-section">
+                <!-- History Banner -->
+                <div id="history-mode-banner" class="hidden bg-orange-50 border border-orange-200 text-orange-800 p-3 rounded-xl mb-6 flex justify-between items-center shadow-sm">
+                    <span class="text-sm font-bold flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><polyline points="12 7 12 12 15 15"/></svg>
+                        Viewing Past Record
+                    </span>
+                    <button onclick="exitHistoryMode()" class="text-xs bg-white hover:bg-orange-50 border border-orange-300 px-3 py-1.5 rounded-lg shadow-sm font-semibold transition">Exit View</button>
+                </div>
+
+                <div class="flex flex-col xl:flex-row gap-6">
+                    <!-- Left: Controls -->
+                    <div class="w-full xl:w-1/3 space-y-5">
+                        
+                        <!-- History Exit Button (Only visible in history mode) -->
+                        <button id="history-exit-btn-main" onclick="exitHistoryMode()" class="hidden w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 p-3 rounded-xl font-bold shadow-sm transition flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                            Cancel / Back to New
+                        </button>
+
+                        <!-- 1. Customer -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                <svg class="text-slate-400 mr-1" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Customer Info
+                            </h3>
+                            <div class="space-y-3">
+                                <input type="text" id="cust-name" oninput="updateAllPreviews()" placeholder="Customer Name" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                                <input type="date" id="voucher-date" oninput="updateAllPreviews()" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                            </div>
+                        </div>
+
+                        <!-- 2. Items -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-slate-700 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                    <svg class="text-slate-400 mr-1" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                                    Items
+                                </h3>
+                                <button onclick="showQuickAddModal()" class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-100 transition flex items-center">
+                                    <svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                                    Saved Products
+                                </button>
+                            </div>
+                            
+                            <div id="items-input-list" class="space-y-3 max-h-[300px] overflow-y-auto p-2"></div>
+                            
+                            <button onclick="addItem()" class="mt-4 w-full py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-slate-500 hover:border-blue-400 hover:text-blue-600 text-sm font-bold transition flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                Add Item Row
+                            </button>
+                            
+                            <!-- Advanced Discount -->
+                            <div class="mt-5 pt-4 border-t border-slate-100">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Discount</label>
+                                <div class="flex gap-0 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                    <input type="number" id="voucher-discount-val" oninput="updateAllPreviews()" value="0" class="flex-1 px-4 py-2.5 text-right text-sm outline-none">
+                                    <div class="border-l border-slate-200 bg-slate-50 px-2 flex items-center">
+                                        <select id="voucher-discount-type" onchange="updateAllPreviews()" class="bg-transparent text-sm font-bold text-slate-600 outline-none cursor-pointer">
+                                            <option value="mmk">MMK</option>
+                                            <option value="percent">%</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Actions -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-2 gap-3">
+                            <button onclick="downloadVoucher()" id="download-btn" class="col-span-1 bg-slate-800 hover:bg-slate-900 text-white p-3 rounded-xl font-bold shadow-lg shadow-slate-200 flex items-center justify-center gap-2 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> 
+                                Save Image
+                            </button>
+                            <!-- Changed Share to Visit Page -->
+                            <button onclick="visitPage()" id="visit-page-btn" class="col-span-1 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl font-bold shadow-lg shadow-blue-200 flex items-center justify-center gap-2 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                                Visit Page
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Preview -->
+                    <div class="w-full xl:w-2/3">
+                        <div class="bg-slate-200/50 p-2 md:p-6 rounded-3xl overflow-hidden border border-slate-200">
+                            <div class="flex justify-between items-center mb-3 px-1">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    Live Preview
+                                </p>
+                                <span class="text-[10px] font-bold bg-white px-2 py-1 rounded shadow-sm text-slate-600" id="current-layout-label">Standard Layout</span>
+                            </div>
+                            
+                            <div class="voucher-scroll-area">
+                                <!-- VOUCHER DOM STRUCTURE -->
+                                <div id="voucher-container" class="voucher-preview layout-1 shadow-2xl rounded-lg p-8">
+                                    
+                                    <div class="layout-6-curve hidden"></div> <!-- For Layout 6 -->
+
+                                    <!-- Header -->
+                                    <div class="v-header flex mb-6 relative z-10">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-4 mb-2">
+                                                <div class="logo-box w-16 h-16 flex items-center justify-center bg-white rounded-lg overflow-hidden shrink-0">
+                                                    <!-- Use Data URI for default logo -->
+                                                    <img class="preview-logo-img w-full h-full object-contain" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23f1f5f9'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%2394a3b8' dy='.3em' text-anchor='middle'%3ELOGO%3C/text%3E%3C/svg%3E" alt="Logo">
+                                                </div>
+                                                <div class="v-title-group">
+                                                    <h1 class="preview-biz-name text-2xl font-black uppercase tracking-tight leading-none text-theme-p">My Shop</h1>
+                                                    <p class="text-xs opacity-60 mt-1 font-bold tracking-widest">INVOICE</p>
+                                                </div>
+                                            </div>
+                                            <div class="preview-biz-info text-xs opacity-75 whitespace-pre-line leading-relaxed font-medium">Yangon, Myanmar
+                                            09-123456789</div>
+                                        </div>
+                                        <div class="v-meta pl-4 min-w-[150px] text-right">
+                                            <p class="text-sm font-bold text-theme-p">No: <span class="preview-no text-slate-800">#0000</span></p>
+                                            <p class="text-xs font-semibold text-slate-500 mt-1">Date: <span class="preview-date">--/--/--</span></p>
+                                            <!-- QR Code Area -->
+                                            <div class="preview-qr mt-2 flex justify-end">
+                                                <img class="preview-qr-img w-16 h-16 hidden rounded-md shadow-sm border border-slate-100 p-1" src="" alt="QR">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="v-content relative z-10">
+                                        <!-- Bill To -->
+                                        <div class="mb-6 bg-theme-a p-3 rounded-lg border-l-4 border-theme-p">
+                                            <p class="text-[10px] uppercase font-bold text-theme-p mb-1">Bill To</p>
+                                            <h3 class="preview-name text-lg font-bold text-slate-800">Cash Customer</h3>
+                                        </div>
+
+                                        <!-- Table -->
+                                        <table class="w-full mb-8">
+                                            <thead class="bg-theme-p text-white">
+                                                <tr>
+                                                    <th class="text-left py-2.5 px-3 text-xs uppercase font-bold w-[50%] rounded-l-md">Description</th>
+                                                    <th class="text-center py-2.5 px-3 text-xs uppercase font-bold w-[15%]">Qty</th>
+                                                    <th class="text-right py-2.5 px-3 text-xs uppercase font-bold w-[15%]">Price</th>
+                                                    <th class="text-right py-2.5 px-3 text-xs uppercase font-bold w-[20%] rounded-r-md">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="preview-items-body divide-y divide-slate-100"></tbody>
+                                        </table>
+
+                                        <!-- Footer Section -->
+                                        <div class="flex justify-between items-end">
+                                            <div class="w-5/12 text-xs opacity-60 leading-relaxed">
+                                                <p>Thank you for your purchase!</p>
+                                                <p class="preview-social-link font-bold text-theme-s mt-1 hidden"></p>
+                                            </div>
+                                            
+                                            <div class="w-6/12">
+                                                <div class="space-y-2 border-t border-slate-200 pt-2">
+                                                    <div class="flex justify-between text-xs font-medium text-slate-500">
+                                                        <span>Subtotal</span>
+                                                        <span class="preview-subtotal">0</span>
+                                                    </div>
+                                                    <div class="flex justify-between text-xs font-medium text-red-500">
+                                                        <span>Discount</span>
+                                                        <span class="preview-discount">-0</span>
+                                                    </div>
+                                                    <div class="flex justify-between text-xl font-bold text-theme-p mt-3 pt-3 border-t-2 border-theme-p border-dashed">
+                                                        <span>Total</span>
+                                                        <span class="preview-grandtotal">0 MMK</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Sign -->
+                                                <div class="sign-container mt-8 text-center relative hidden">
+                                                    <img class="preview-sign-img h-12 w-auto object-contain mx-auto mb-1" src="">
+                                                    <!-- Signature Text -->
+                                                    <div class="border-t border-slate-300 pt-1 mx-auto min-w-[120px]">
+                                                        <p class="text-[9px] font-bold uppercase text-slate-400">Authorized Signature</p>
+                                                        <p class="preview-sign-name text-[10px] font-bold text-theme-s mt-1 hidden"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Sidebar for L3 -->
+                                    <div class="sidebar-strip hidden"></div> 
+                                </div>
+                                <!-- END VOUCHER -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: HISTORY -->
+            <div id="page-history" class="page-section hidden">
+                <h2 class="text-xl font-bold text-slate-800 mb-4">History</h2>
+                <div id="history-list" class="space-y-3"></div>
+                <button onclick="clearHistory()" class="mt-8 text-red-500 text-sm font-bold w-full py-3 hover:bg-red-50 rounded-xl transition">Clear All History</button>
+            </div>
+
+            <!-- PAGE: SETTINGS -->
+            <div id="page-settings" class="page-section hidden">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    
+                    <!-- Settings Live Preview (Moved to Top for Mobile) -->
+                    <div class="w-full lg:w-1/2 order-1 lg:order-2">
+                        <div class="sticky top-20 lg:top-24">
+                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">Settings Live Preview</p>
+                            <div class="bg-slate-200 p-4 rounded-xl overflow-hidden border border-slate-300">
+                                <div id="settings-preview-mount" class="origin-top-left transform scale-[0.45] md:scale-[0.65]">
+                                    <!-- JS clones the voucher container here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Controls -->
+                    <div class="w-full lg:w-1/2 space-y-6 order-2 lg:order-1">
+                        
+                        <!-- 1. Profile -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 class="font-bold text-sm text-slate-400 uppercase tracking-wider mb-4 border-b pb-2">Shop Profile</h3>
+                            <div class="space-y-4">
+                                <input type="text" id="set-name" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Shop Name">
+                                <textarea id="set-info" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Address..."></textarea>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="relative group cursor-pointer">
+                                        <label class="block text-xs font-bold mb-1">Logo</label>
+                                        <input type="file" onchange="handleImg(this, 'logo')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                                        <div class="border-2 border-dashed border-slate-300 rounded-lg h-20 flex items-center justify-center bg-slate-50 group-hover:bg-blue-50 transition">
+                                            <img id="set-logo-prev" class="h-16 object-contain" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' fill='%23f8fafc'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23cbd5e1' dy='.3em' text-anchor='middle'%3E+%3C/text%3E%3C/svg%3E">
+                                        </div>
+                                    </div>
+                                    <div class="relative group cursor-pointer">
+                                        <label class="block text-xs font-bold mb-1 flex justify-between">
+                                            Signature 
+                                            <input type="checkbox" id="set-sign-check" class="accent-blue-500">
+                                        </label>
+                                        <input type="file" onchange="handleImg(this, 'sign')" class="absolute inset-0 opacity-0 cursor-pointer z-10 top-6">
+                                        <div class="border-2 border-dashed border-slate-300 rounded-lg h-20 flex items-center justify-center bg-slate-50 group-hover:bg-blue-50 transition mt-6">
+                                            <img id="set-sign-prev" class="h-16 object-contain" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' fill='%23f8fafc'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23cbd5e1' dy='.3em' text-anchor='middle'%3E+%3C/text%3E%3C/svg%3E">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Signature Name -->
+                                <div>
+                                    <label class="block text-xs font-bold mb-1 text-slate-500">Signatory Name</label>
+                                    <input type="text" id="set-sign-name" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Manager">
+                                </div>
+
+                                <!-- Separated Links -->
+                                <div class="space-y-3 pt-2 border-t border-slate-100">
+                                    <div>
+                                        <label class="block text-xs font-bold mb-1 text-purple-600 flex items-center">
+                                            <svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+                                            QR Code Link (On Voucher)
+                                        </label>
+                                        <input type="text" id="set-social" class="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm bg-purple-50 focus:bg-white" placeholder="e.g. https://facebook.com/myshop">
+                                    </div>
+                                    <!-- NEW: Page Link -->
+                                    <div>
+                                        <label class="block text-xs font-bold mb-1 text-blue-600 flex items-center">
+                                            <svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                            Page Link (Button URL)
+                                        </label>
+                                        <input type="text" id="set-page-link" class="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm bg-blue-50 focus:bg-white" placeholder="e.g. https://m.me/myshop">
+                                        <p class="text-[10px] text-slate-400 mt-1">This link opens when you click 'Visit Page'.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Appearance -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 class="font-bold text-sm text-slate-400 uppercase tracking-wider mb-4 border-b pb-2">Appearance</h3>
+                            
+                            <!-- Theme Selector -->
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold mb-2">Color Theme</label>
+                                <div class="flex gap-2 flex-wrap" id="theme-selector-container">
+                                    <!-- 10 Themes injected by JS -->
+                                </div>
+                                <!-- Custom Colors -->
+                                <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                    <label class="block text-xs font-bold mb-2 text-slate-500">Custom Dual Tone</label>
+                                    <div class="flex gap-3 items-center">
+                                        <div class="flex items-center gap-1">
+                                            <input type="color" id="custom-primary" class="h-8 w-8 rounded cursor-pointer border-0" value="#000000">
+                                            <span class="text-[10px] font-bold text-slate-400">Pri</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <input type="color" id="custom-secondary" class="h-8 w-8 rounded cursor-pointer border-0" value="#000000">
+                                            <span class="text-[10px] font-bold text-slate-400">Sec</span>
+                                        </div>
+                                        <button onclick="applyCustomTheme()" class="ml-auto text-xs bg-white border border-slate-300 px-3 py-1 rounded font-bold hover:bg-slate-100">Apply Custom</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Layout Grid -->
+                            <div>
+                                <label class="block text-xs font-bold mb-3">Layout Style (6 Designs)</label>
+                                <div class="grid grid-cols-6 gap-2" id="layout-grid">
+                                    <!-- JS will populate buttons here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Saved Products Section -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 class="font-bold text-sm text-slate-400 uppercase tracking-wider mb-4 border-b pb-2">Saved Products</h3>
+                            <div class="flex gap-2 mb-3">
+                                <input type="text" id="new-prod-name" placeholder="Item Name" class="flex-1 px-3 py-2 border rounded-lg text-sm bg-slate-50">
+                                <input type="number" id="new-prod-price" placeholder="Price" class="w-24 px-3 py-2 border rounded-lg text-sm bg-slate-50">
+                                <button onclick="saveNewProduct()" class="bg-green-600 text-white px-3 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                </button>
+                            </div>
+                            <div id="settings-product-list" class="space-y-2 max-h-[200px] overflow-y-auto"></div>
+                        </div>
+
+                        <!-- 4. Save -->
+                        <button onclick="saveSettings()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-200 transition">Save Changes</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Nav -->
+        <nav class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-slate-200 flex justify-around items-center py-2 z-50 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+            <button onclick="switchPage('generator')" class="nav-item active flex flex-col items-center gap-1 text-slate-400 w-1/3 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                <span class="text-[10px] font-bold">Voucher</span>
+            </button>
+            <button onclick="switchPage('history')" class="nav-item flex flex-col items-center gap-1 text-slate-400 w-1/3 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><polyline points="12 7 12 12 15 15"/></svg>
+                <span class="text-[10px] font-bold">History</span>
+            </button>
+            <button onclick="switchPage('settings')" class="nav-item flex flex-col items-center gap-1 text-slate-400 w-1/3 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+                <span class="text-[10px] font-bold">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Quick Add Modal -->
+        <div id="quick-add-modal" class="hidden fixed inset-0 bg-black/60 z-[2000] flex justify-center items-end md:items-center backdrop-blur-sm p-4">
+            <div class="bg-white w-full md:w-[400px] rounded-2xl p-5 max-h-[70vh] flex flex-col shadow-2xl animate-[slideUp_0.3s_ease-out]">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h3 class="font-bold text-lg">Saved Products</h3>
+                    <button onclick="document.getElementById('quick-add-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+                <div id="modal-product-list" class="overflow-y-auto space-y-2 flex-1"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. CORE DATA ---
+        const DB_KEY = 'dn_voucher_v3_pro';
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || { users: [] };
+        let currentUser = null;
+        
+        let voucherItems = [{ id: Date.now(), desc: 'Service', qty: 1, price: 0 }];
+        let currentTheme = 'theme-royal-gold';
+        let currentLayout = 'layout-1';
+
+        // Placeholder Constants using Data URIs
+        const DEFAULT_LOGO = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23f1f5f9'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%2394a3b8' dy='.3em' text-anchor='middle'%3ELOGO%3C/text%3E%3C/svg%3E";
+        const DEFAULT_PLACEHOLDER = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' fill='%23f8fafc'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23cbd5e1' dy='.3em' text-anchor='middle'%3E+%3C/text%3E%3C/svg%3E";
+
+        // --- 2. AUTH ---
+        function toggleAuthMode() {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('signup-form').classList.toggle('hidden');
+        }
+
+        function handleSignup() {
+            const u = document.getElementById('signup-username').value.trim();
+            const p = document.getElementById('signup-password').value.trim();
+            if(!u || !p) return alert("Required");
+            
+            // Check existing
+            if(db.users.find(x => x.username === u)) return alert("Username taken");
+
+            const newUser = {
+                username: u, password: p,
+                settings: {
+                    name: 'Digital Nest', info: 'Yangon, Myanmar\n09-123456789',
+                    logo: '', sign: '', signName: '', showSign: true, social: '',
+                    pageLink: '', // New field for Page Link
+                    theme: 'theme-royal-gold', layout: 'layout-1'
+                },
+                products: [{id:1, name:'Web Design', price:200000}],
+                history: []
+            };
+            db.users.push(newUser);
+            saveDb();
+            alert("Success! Please Login.");
+            toggleAuthMode();
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value.trim();
+            const found = db.users.find(x => x.username === u && x.password === p);
+            if(found) {
+                currentUser = found;
+                if(!currentUser.settings.pageLink) currentUser.settings.pageLink = '';
+                if(!currentUser.settings.signName) currentUser.settings.signName = '';
+                initApp();
+            } else alert("Invalid credentials");
+        }
+
+        function handleLogout() {
+            location.reload();
+        }
+
+        function saveDb() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+        // --- 3. INIT & NAVIGATION ---
+        function initApp() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('header-username').innerText = currentUser.username;
+            
+            // Generate Layout Buttons (1-6)
+            const grid = document.getElementById('layout-grid');
+            grid.innerHTML = '';
+            for(let i=1; i<=6; i++) {
+                grid.innerHTML += `
+                    <button onclick="setLayout('layout-${i}')" class="layout-btn bg-slate-100 hover:bg-slate-200 p-2 rounded text-[10px] font-bold border-2 border-transparent transition" data-l="layout-${i}">L${i}</button>
+                `;
+            }
+
+            // Generate Theme Buttons
+            const themes = [
+                {id: 'theme-royal-gold', c1:'#1e3a8a', c2:'#b45309'},
+                {id: 'theme-midnight-purple', c1:'#581c87', c2:'#db2777'},
+                {id: 'theme-nature-fresh', c1:'#065f46', c2:'#65a30d'},
+                {id: 'theme-sunset-glow', c1:'#c2410c', c2:'#f59e0b'},
+                {id: 'theme-ocean-breeze', c1:'#0e7490', c2:'#22d3ee'},
+                {id: 'theme-crimson-night', c1:'#7f1d1d', c2:'#1f2937'},
+                {id: 'theme-berry-smoothie', c1:'#be185d', c2:'#4338ca'},
+                {id: 'theme-slate-stone', c1:'#334155', c2:'#64748b'},
+                {id: 'theme-lemon-lime', c1:'#65a30d', c2:'#ca8a04'},
+                {id: 'theme-coffee-bean', c1:'#78350f', c2:'#92400e'}
+            ];
+            const tContainer = document.getElementById('theme-selector-container');
+            tContainer.innerHTML = themes.map(t => `
+                <button onclick="setTheme('${t.id}')" class="w-8 h-8 rounded-full ring-2 ring-offset-2 ring-transparent focus:ring-blue-500 transition shadow-sm" style="background: linear-gradient(135deg, ${t.c1}, ${t.c2});" title="${t.id}"></button>
+            `).join('');
+
+            // Create Cloned Preview
+            const masterPreview = document.getElementById('voucher-container');
+            const clone = masterPreview.cloneNode(true);
+            clone.id = 'voucher-container-clone'; 
+            clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+            document.getElementById('settings-preview-mount').appendChild(clone);
+
+            // Load Settings
+            loadSettingsToUI();
+            
+            // Initial Render
+            document.getElementById('voucher-date').valueAsDate = new Date();
+            renderInputs();
+            updateAllPreviews();
+        }
+
+        function switchPage(pid) {
+            document.querySelectorAll('.page-section').forEach(e => e.classList.add('hidden'));
+            document.getElementById('page-'+pid).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+            
+            if(pid === 'generator') document.querySelectorAll('.nav-item')[0].classList.add('active');
+            if(pid === 'history') {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+                renderHistory();
+            }
+            if(pid === 'settings') {
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
+                renderSettingsProducts();
+            }
+        }
+
+        // --- 4. GENERATOR LOGIC ---
+        function addItem() {
+            voucherItems.push({ id: Date.now(), desc: '', qty: 1, price: 0 });
+            renderInputs();
+        }
+        function removeItem(id) {
+            voucherItems = voucherItems.filter(x => x.id !== id);
+            renderInputs();
+            updateAllPreviews();
+        }
+        function updateItem(id, field, val) {
+            const row = voucherItems.find(x => x.id === id);
+            if(row) { row[field] = val; updateAllPreviews(); }
+        }
+
+        function renderInputs() {
+            const list = document.getElementById('items-input-list');
+            list.innerHTML = voucherItems.map(x => `
+                <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 relative group">
+                    <button onclick="removeItem(${x.id})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center transition shadow-md hover:bg-red-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                    <div class="mb-2">
+                        <input type="text" value="${x.desc}" oninput="updateItem(${x.id},'desc',this.value)" placeholder="Item Description" class="w-full bg-transparent border-b border-slate-300 outline-none text-sm font-medium focus:border-blue-500">
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="number" value="${x.qty}" oninput="updateItem(${x.id},'qty',Number(this.value))" class="w-1/3 bg-transparent border-b border-slate-300 outline-none text-sm text-center" placeholder="Qty">
+                        <input type="number" value="${x.price}" oninput="updateItem(${x.id},'price',Number(this.value))" class="w-2/3 bg-transparent border-b border-slate-300 outline-none text-sm text-right" placeholder="Price">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateAllPreviews() {
+            const cName = document.getElementById('cust-name').value || 'Customer';
+            const cDate = document.getElementById('voucher-date').value || 'Date';
+            const discVal = Number(document.getElementById('voucher-discount-val').value) || 0;
+            const discType = document.getElementById('voucher-discount-type').value;
+
+            let subtotal = voucherItems.reduce((a,b) => a + (b.qty*b.price), 0);
+            let discountAmt = (discType === 'percent') ? Math.round(subtotal * (discVal/100)) : discVal;
+            let total = subtotal - discountAmt;
+
+            document.querySelectorAll('.preview-name').forEach(e => e.innerText = cName);
+            document.querySelectorAll('.preview-date').forEach(e => e.innerText = cDate);
+            
+            if(!window.invoiceNo) window.invoiceNo = '#'+Math.floor(1000+Math.random()*9000);
+            document.querySelectorAll('.preview-no').forEach(e => e.innerText = window.invoiceNo);
+
+            const rowsHtml = voucherItems.map(x => `
+                <tr>
+                    <td class="py-2.5 px-3 text-sm font-medium border-l border-b border-slate-50">${x.desc || '-'}</td>
+                    <td class="py-2.5 px-3 text-sm text-center border-b border-slate-50">${x.qty}</td>
+                    <td class="py-2.5 px-3 text-sm text-right border-b border-slate-50">${x.price.toLocaleString()}</td>
+                    <td class="py-2.5 px-3 text-sm text-right font-bold border-r border-b border-slate-50">${(x.qty*x.price).toLocaleString()}</td>
+                </tr>
+            `).join('');
+            
+            document.querySelectorAll('.preview-items-body').forEach(e => e.innerHTML = rowsHtml);
+            
+            document.querySelectorAll('.preview-subtotal').forEach(e => e.innerText = subtotal.toLocaleString());
+            document.querySelectorAll('.preview-discount').forEach(e => e.innerText = '- ' + discountAmt.toLocaleString());
+            document.querySelectorAll('.preview-grandtotal').forEach(e => e.innerText = total.toLocaleString() + ' MMK');
+
+            if(!document.getElementById('page-settings').classList.contains('hidden')) {
+                refreshBrandingFromInputs();
+            } else {
+                refreshBrandingFromSaved();
+            }
+        }
+
+        function refreshBrandingFromSaved() {
+            const s = currentUser.settings;
+            applyBrandingToDOM(s.name, s.info, s.logo, s.sign, s.signName, s.showSign, s.theme, s.layout, s.social);
+        }
+
+        function refreshBrandingFromInputs() {
+            const name = document.getElementById('set-name').value;
+            const info = document.getElementById('set-info').value;
+            const logo = document.getElementById('set-logo-prev').src;
+            const sign = document.getElementById('set-sign-prev').src;
+            const signName = document.getElementById('set-sign-name').value;
+            const showSign = document.getElementById('set-sign-check').checked;
+            const social = document.getElementById('set-social').value;
+            applyBrandingToDOM(name, info, logo, sign, signName, showSign, currentTheme, currentLayout, social);
+        }
+
+        function applyBrandingToDOM(name, info, logo, sign, signName, showSign, theme, layout, social) {
+            document.querySelectorAll('.preview-biz-name').forEach(e => e.innerText = name || 'My Shop');
+            document.querySelectorAll('.preview-biz-info').forEach(e => e.innerText = info || '');
+            
+            // Logo Logic Fix: Check if logo is the placeholder (which is a plus sign)
+            document.querySelectorAll('.preview-logo-img').forEach(e => {
+                const isPlaceholder = logo === DEFAULT_PLACEHOLDER;
+                e.src = (logo && !isPlaceholder) ? logo : DEFAULT_LOGO;
+            });
+
+            document.querySelectorAll('.sign-container').forEach(e => {
+                e.style.display = showSign ? 'block' : 'none';
+                if(showSign) {
+                    const img = e.querySelector('img');
+                    if(sign && sign !== DEFAULT_PLACEHOLDER) img.src = sign;
+                    else e.style.display = 'none';
+                    
+                    const nameEl = e.querySelector('.preview-sign-name');
+                    if(signName) {
+                        nameEl.innerText = signName;
+                        nameEl.classList.remove('hidden');
+                    } else nameEl.classList.add('hidden');
+                }
+            });
+
+            document.querySelectorAll('.preview-qr-img').forEach(e => {
+                if(social) {
+                    e.src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(social)}`;
+                    e.classList.remove('hidden');
+                } else {
+                    e.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('.preview-social-link').forEach(e => {
+                if(social) {
+                    e.innerText = "Scan for Social Page";
+                    e.classList.remove('hidden');
+                } else e.classList.add('hidden');
+            });
+
+            const containers = [document.getElementById('voucher-container'), document.getElementById('voucher-container-clone')];
+            containers.forEach(c => {
+                if(!c) return;
+                c.className = `voucher-preview shadow-2xl rounded-lg p-8 ${theme} ${layout}`;
+                if(theme === 'theme-custom') {
+                    // Apply custom vars manually to element
+                    c.style.setProperty('--primary', document.getElementById('custom-primary').value);
+                    c.style.setProperty('--secondary', document.getElementById('custom-secondary').value);
+                } else {
+                    c.style = ""; // Reset custom styles for preset themes
+                }
+                
+                const curve = c.querySelector('.layout-6-curve');
+                if(layout === 'layout-6') curve.classList.remove('hidden');
+                else curve.classList.add('hidden');
+            });
+        }
+
+        // --- 6. SETTINGS LOGIC ---
+        function loadSettingsToUI() {
+            const s = currentUser.settings;
+            document.getElementById('set-name').value = s.name;
+            document.getElementById('set-info').value = s.info;
+            document.getElementById('set-logo-prev').src = s.logo || DEFAULT_PLACEHOLDER;
+            document.getElementById('set-sign-prev').src = s.sign || DEFAULT_PLACEHOLDER;
+            document.getElementById('set-sign-name').value = s.signName || '';
+            document.getElementById('set-sign-check').checked = s.showSign;
+            document.getElementById('set-social').value = s.social || '';
+            document.getElementById('set-page-link').value = s.pageLink || '';
+            
+            currentTheme = s.theme || 'theme-royal-gold';
+            currentLayout = s.layout || 'layout-1';
+            
+            updateActiveLayoutBtn();
+            renderSettingsProducts();
+        }
+
+        function handleImg(input, type) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById(type === 'logo' ? 'set-logo-prev' : 'set-sign-prev').src = e.target.result;
+                    updateAllPreviews();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            updateAllPreviews();
+        }
+
+        function applyCustomTheme() {
+            currentTheme = 'theme-custom';
+            updateAllPreviews();
+        }
+
+        function setLayout(layout) {
+            currentLayout = layout;
+            updateActiveLayoutBtn();
+            updateAllPreviews();
+        }
+
+        function updateActiveLayoutBtn() {
+            document.querySelectorAll('.layout-btn').forEach(b => {
+                if(b.dataset.l === currentLayout) {
+                    b.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+                } else {
+                    b.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+                }
+            });
+            document.getElementById('current-layout-label').innerText = currentLayout.replace('-', ' ').toUpperCase();
+        }
+
+        function saveSettings() {
+            currentUser.settings.name = document.getElementById('set-name').value;
+            currentUser.settings.info = document.getElementById('set-info').value;
+            currentUser.settings.logo = document.getElementById('set-logo-prev').src;
+            currentUser.settings.sign = document.getElementById('set-sign-prev').src;
+            currentUser.settings.signName = document.getElementById('set-sign-name').value;
+            currentUser.settings.showSign = document.getElementById('set-sign-check').checked;
+            currentUser.settings.social = document.getElementById('set-social').value;
+            currentUser.settings.pageLink = document.getElementById('set-page-link').value;
+            currentUser.settings.theme = currentTheme;
+            currentUser.settings.layout = currentLayout;
+            saveDb();
+            alert("Settings Saved!");
+            switchPage('generator');
+        }
+
+        // --- 7. HISTORY & EXPORT ---
+        function addToHistory(total) {
+            currentUser.history.unshift({
+                id: Date.now(),
+                date: new Date().toLocaleString(),
+                cust: document.getElementById('cust-name').value,
+                total: total,
+                items: JSON.parse(JSON.stringify(voucherItems)),
+                discVal: document.getElementById('voucher-discount-val').value,
+                discType: document.getElementById('voucher-discount-type').value,
+                invNo: window.invoiceNo
+            });
+            if(currentUser.history.length > 50) currentUser.history.pop();
+            saveDb();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = currentUser.history.length ? currentUser.history.map(h => `
+                <div class="bg-white p-3 rounded-xl shadow-sm flex justify-between items-center border border-transparent hover:border-blue-400 group">
+                    <div onclick="viewHistory(${h.id})" class="flex-1 cursor-pointer">
+                        <div class="font-bold text-slate-700">${h.cust} <span class="text-xs text-slate-400">(${h.invNo})</span></div>
+                        <div class="text-xs text-slate-400">${h.date} • ${h.items.length} items</div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="font-bold text-green-600">${h.total}</div>
+                        <button onclick="deleteHistoryItem(${h.id})" class="text-slate-300 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </div>
+                </div>
+            `).join('') : '<div class="text-center text-slate-400 py-10">No History</div>';
+        }
+
+        function deleteHistoryItem(id) {
+            if(confirm("Delete this record?")) {
+                currentUser.history = currentUser.history.filter(h => h.id !== id);
+                saveDb();
+                renderHistory();
+            }
+        }
+
+        function viewHistory(id) {
+            const h = currentUser.history.find(x => x.id === id);
+            if(!h) return;
+            document.getElementById('cust-name').value = h.cust;
+            voucherItems = JSON.parse(JSON.stringify(h.items));
+            document.getElementById('voucher-discount-val').value = h.discVal;
+            document.getElementById('voucher-discount-type').value = h.discType;
+            window.invoiceNo = h.invNo;
+            
+            switchPage('generator');
+            renderInputs();
+            updateAllPreviews();
+            
+            // Show Banner and Big Exit Button
+            document.getElementById('history-mode-banner').classList.remove('hidden');
+            document.getElementById('history-exit-btn-main').classList.remove('hidden');
+        }
+
+        function exitHistoryMode() {
+            window.invoiceNo = null; 
+            voucherItems = [{ id: Date.now(), desc: 'Service', qty: 1, price: 0 }];
+            document.getElementById('cust-name').value = '';
+            document.getElementById('voucher-discount-val').value = 0;
+            
+            // Hide Banner and Big Exit Button
+            document.getElementById('history-mode-banner').classList.add('hidden');
+            document.getElementById('history-exit-btn-main').classList.add('hidden');
+            
+            renderInputs();
+            updateAllPreviews();
+        }
+
+        function clearHistory() {
+            if(confirm("Delete all history?")) {
+                currentUser.history = [];
+                saveDb();
+                renderHistory();
+            }
+        }
+
+        // --- 8. DOWNLOAD & SHARE ---
+        // Load lib dynamic if needed for save button
+        function loadHtml2Canvas(callback) {
+            if (typeof html2canvas !== 'undefined') { callback(); return; }
+            const script = document.createElement('script');
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+            script.onload = callback;
+            script.onerror = () => {
+                // Fallback to unpkg if cdnjs fails
+                script.src = "https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js";
+                document.head.appendChild(script);
+            };
+            document.head.appendChild(script);
+        }
+
+        async function getVoucherBlob() {
+            const el = document.getElementById('voucher-container');
+            // Slight delay to ensure images render
+            await new Promise(r => setTimeout(r, 100));
+            const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: null, width: el.scrollWidth, windowWidth: el.scrollWidth });
+            return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        }
+
+        function downloadVoucher() {
+            const loading = document.getElementById('loading-overlay');
+            loading.style.display = 'flex';
+            
+            loadHtml2Canvas(async () => {
+                try {
+                    const blob = await getVoucherBlob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Voucher-${document.getElementById('cust-name').value}.png`;
+                    a.click();
+                    
+                    if(document.getElementById('history-mode-banner').classList.contains('hidden')) {
+                        addToHistory(document.querySelector('.preview-grandtotal').innerText);
+                    }
+                } catch(e) { alert("Error: " + e.message); }
+                finally { loading.style.display = 'none'; }
+            });
+        }
+
+        // New Feature: Visit Page
+        function visitPage() {
+            const link = currentUser.settings.pageLink;
+            if(link) {
+                window.open(link, '_blank');
+            } else {
+                alert("Please add your Page Link in Settings first.");
+                switchPage('settings');
+                // Highlight the input
+                setTimeout(() => document.getElementById('set-page-link').focus(), 500);
+            }
+        }
+
+        // --- 9. SAVED PRODUCTS ---
+        function saveNewProduct() {
+            const n = document.getElementById('new-prod-name').value;
+            const p = document.getElementById('new-prod-price').value;
+            if(!n || !p) return;
+            currentUser.products.push({id:Date.now(), name:n, price:Number(p)});
+            saveDb();
+            renderSettingsProducts();
+            document.getElementById('new-prod-name').value = '';
+            document.getElementById('new-prod-price').value = '';
+        }
+        function deleteProduct(id) {
+            currentUser.products = currentUser.products.filter(x => x.id !== id);
+            saveDb();
+            renderSettingsProducts();
+        }
+        function renderSettingsProducts() {
+            const list = document.getElementById('settings-product-list');
+            list.innerHTML = currentUser.products.map(p => `
+                <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                    <div><div class="font-bold text-sm">${p.name}</div><div class="text-xs text-slate-500">${p.price.toLocaleString()} MMK</div></div>
+                    <button onclick="deleteProduct(${p.id})" class="text-red-500 px-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                </div>
+            `).join('');
+        }
+        function showQuickAddModal() {
+            document.getElementById('quick-add-modal').classList.remove('hidden');
+            const list = document.getElementById('modal-product-list');
+            list.innerHTML = currentUser.products.map(p => `
+                <div onclick="addSavedItem(${p.id})" class="p-3 border-b cursor-pointer hover:bg-slate-50 flex justify-between">
+                    <span class="font-medium">${p.name}</span><span class="text-slate-500">${p.price}</span>
+                </div>
+            `).join('');
+        }
+        function addSavedItem(id) {
+            const p = currentUser.products.find(x => x.id === id);
+            if(p) {
+                const last = voucherItems[voucherItems.length-1];
+                if(last && !last.desc && !last.price) { last.desc=p.name; last.price=p.price; }
+                else voucherItems.push({id:Date.now(), desc:p.name, qty:1, price:p.price});
+                renderInputs(); updateAllPreviews();
+                document.getElementById('quick-add-modal').classList.add('hidden');
+            }
+        }
+
+        // Settings Listeners
+        ['set-name','set-info','set-social','set-sign-name','custom-primary','custom-secondary','set-page-link'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', updateAllPreviews);
+        });
+        document.getElementById('set-sign-check').addEventListener('change', updateAllPreviews);
+
+    </script>
+</body>
+</html>

@@ -3,295 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Nest | Mobile Converter</title>
+    <title>Digital Nest | Premium Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
-        body { 
-            font-family: 'Pyidaungsu', 'Inter', sans-serif; 
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
         
+        body { 
+            font-family: 'Plus Jakarta Sans', 'Pyidaungsu', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.05) 0, transparent 50%), 
+                              radial-gradient(at 50% 0%, rgba(59, 130, 246, 0.1) 0, transparent 50%);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 20px 50px -12px rgba(59, 130, 246, 0.15);
+        }
+
+        .input-box {
+            background: #ffffff;
+            border: 2px solid #f1f5f9;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-box:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle {
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
         input::-webkit-outer-spin-button, 
         input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-        .glass-card {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .shimmer {
-            background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.03) 50%, transparent 75%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite linear;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .transition-soft {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .social-btn {
-            @apply flex flex-col items-center justify-center p-5 rounded-[2rem] border transition-soft active:scale-90 shadow-lg;
-        }
     </style>
 </head>
-<body class="bg-black text-slate-100 min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-0 sm:p-4 overflow-x-hidden">
+<body class="text-slate-900 min-h-[100dvh] flex flex-col items-center justify-center p-6">
 
-    <!-- Top Gradient Bar -->
-    <div class="w-full h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 fixed top-0 z-50 sm:hidden"></div>
+    <!-- Background Elements -->
+    <div class="fixed top-[-10%] left-[-10%] w-64 h-64 bg-blue-400/10 rounded-full blur-3xl"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
 
-    <!-- Main Container -->
-    <div class="w-full max-w-md min-h-screen sm:min-h-0 sm:rounded-[3rem] glass-card shadow-2xl flex flex-col relative overflow-hidden border-x-0 sm:border-x border-slate-800">
+    <div class="w-full max-w-sm relative z-10">
         
-        <!-- Live Badge -->
-        <div class="absolute top-6 right-6 flex items-center space-x-2 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md z-20">
-            <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            <span class="text-[9px] font-black text-green-400 uppercase tracking-widest">Live</span>
-        </div>
-
         <!-- Header Section -->
-        <div class="relative pt-12 pb-14 px-8 text-center bg-gradient-to-b from-indigo-950/30 to-transparent">
-            <div class="relative inline-block mb-4">
-                <div class="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse"></div>
-                <div class="relative w-24 h-24 mx-auto rounded-3xl overflow-hidden border-2 border-white/5 shadow-2xl transition-soft hover:scale-105">
-                    <img src="photo_2025-07-10_11-03-43.jpg" alt="Digital Nest Logo" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Digital+Nest&background=4f46e5&color=fff&size=128'">
-                </div>
+        <div class="text-center mb-10">
+            <div class="inline-block p-4 bg-white rounded-[2rem] shadow-xl mb-4 float-animation border border-blue-50">
+                <img src="photo_2025-07-10_11-03-43.jpg" class="w-16 h-16 rounded-[1.5rem] object-cover" >
             </div>
-            <h1 class="text-3xl font-black tracking-tight text-white mb-1">Digital Nest</h1>
-            <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-90">Exchange Solution</p>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Digital Nest</h1>
+            <p class="text-[11px] text-blue-500 font-extrabold uppercase tracking-[0.3em]">Currency Exchange Service</p>
         </div>
 
-        <!-- Main Body -->
-        <div class="flex-1 px-6 pb-6 -mt-6 space-y-6">
+        <!-- Glass Main Card -->
+        <div class="glass-panel rounded-[3rem] p-8 space-y-8">
             
-            <!-- Rate Mode Switcher -->
-            <div class="flex bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/50 backdrop-blur-md">
-                <button id="marketBtn" class="flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft bg-indigo-600 text-white shadow-lg">
-                    ပြင်ပပေါက်ဈေး
-                </button>
-                <button id="officialBtn" class="flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft text-slate-500">
-                    ဗဟိုဘဏ်
-                </button>
+            <!-- Minimal Toggle -->
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl">
+                <button id="marketBtn" class="btn-toggle active flex-1 py-3 text-[11px] font-bold rounded-xl uppercase">Market Rate</button>
+                <button id="officialBtn" class="btn-toggle flex-1 py-3 text-[11px] font-bold rounded-xl text-slate-500 uppercase">Official Rate</button>
             </div>
 
-            <!-- Rate Display Box -->
-            <div class="bg-white/5 rounded-[2.5rem] p-7 border border-white/5 flex justify-between items-center group relative overflow-hidden">
-                <div id="rateLoading" class="absolute inset-0 shimmer opacity-0 pointer-events-none transition-opacity duration-300"></div>
-                <div class="relative z-10">
-                    <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest block mb-1">Current Rate</span>
-                    <div class="flex items-baseline space-x-2">
-                        <span id="currentRateDisplay" class="text-4xl font-black text-white tracking-tighter">0.00</span>
-                        <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest">MMK</span>
-                    </div>
-                </div>
-                <button onclick="fetchLatestRates()" class="relative z-10 bg-slate-800/80 p-4 rounded-2xl border border-slate-700 active:scale-90 transition-soft">
-                    <i class="fas fa-arrows-rotate text-indigo-400" id="syncIcon"></i>
-                </button>
-            </div>
-
-            <!-- Currency Inputs -->
-            <div class="space-y-3">
-                <div class="relative group">
-                    <div class="relative">
+            <!-- Inputs -->
+            <div class="space-y-4">
+                <div class="input-box rounded-[2rem] p-5 flex items-center">
+                    <div class="flex-1">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">THB Amount</span>
                         <input type="number" id="thbInput" inputmode="decimal" placeholder="0.00" 
-                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[2rem] py-6 px-7 text-3xl font-black focus:border-indigo-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800">
-                        <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end">
-                            <img src="https://flagcdn.com/w40/th.png" alt="TH" class="w-6 h-4 rounded-sm shadow-sm mb-1">
-                            <span class="text-slate-600 font-black text-[10px] tracking-widest">THB</span>
-                        </div>
+                            class="w-full bg-transparent text-2xl font-bold focus:outline-none text-slate-900 placeholder:text-slate-200">
+                    </div>
+                    <div class="bg-blue-50 px-3 py-1.5 rounded-full flex items-center space-x-2">
+                        <img src="https://flagcdn.com/w40/th.png" class="w-4 h-3 rounded-xs">
+                        <span class="text-[10px] font-bold text-blue-600">THB</span>
                     </div>
                 </div>
 
-                <div class="flex justify-center -my-4 relative z-20">
-                    <div class="bg-indigo-600 p-3 rounded-full shadow-xl border-4 border-slate-950">
-                        <i class="fas fa-chevron-down text-white text-sm"></i>
-                    </div>
-                </div>
-
-                <div class="relative group">
-                    <div class="relative">
+                <div class="input-box rounded-[2rem] p-5 flex items-center">
+                    <div class="flex-1">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">MMK Result</span>
                         <input type="number" id="mmkInput" inputmode="numeric" placeholder="0" 
-                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[2rem] py-6 px-7 text-3xl font-black focus:border-green-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800 text-green-400">
-                        <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end">
-                            <img src="https://flagcdn.com/w40/mm.png" alt="MM" class="w-6 h-4 rounded-sm shadow-sm mb-1">
-                            <span class="text-slate-600 font-black text-[10px] tracking-widest">MMK</span>
-                        </div>
+                            class="w-full bg-transparent text-2xl font-bold focus:outline-none text-blue-600 placeholder:text-slate-200">
+                    </div>
+                    <div class="bg-blue-50 px-3 py-1.5 rounded-full flex items-center space-x-2">
+                        <img src="https://flagcdn.com/w40/mm.png" class="w-4 h-3 rounded-xs">
+                        <span class="text-[10px] font-bold text-blue-600">MMK</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Social Action Grid -->
-            <div class="grid grid-cols-3 gap-3 pt-2">
-                <!-- Telegram (Copy + Auto-Text) -->
-                <button onclick="handleSocialAction('telegram')" class="social-btn bg-sky-500/10 border-sky-500/20 text-sky-400 hover:bg-sky-500 hover:text-white">
-                    <i class="fa-brands fa-telegram text-3xl mb-1"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Telegram</span>
-                </button>
-                
-                <!-- Messenger (Copy + Redirect) -->
-                <button onclick="handleSocialAction('messenger')" class="social-btn bg-blue-600/10 border-blue-600/20 text-blue-500 hover:bg-blue-600 hover:text-white">
-                    <i class="fa-brands fa-facebook-messenger text-3xl mb-1"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Messenger</span>
+            <!-- Action Area -->
+            <div class="grid grid-cols-3 gap-3">
+                <button onclick="handleAction('telegram')" class="group flex flex-col items-center justify-center p-5 rounded-[2rem] bg-white border border-slate-100 hover:border-blue-400 hover:bg-blue-50 transition-all active:scale-95">
+                    <i class="fa-brands fa-telegram text-2xl text-blue-500 mb-2"></i>
+                    <span class="text-[9px] font-black text-slate-500 uppercase">Telegram</span>
                 </button>
 
-                <!-- TikTok (Copy + Redirect) -->
-                <button onclick="handleSocialAction('tiktok')" class="social-btn bg-rose-600/10 border-rose-600/20 text-rose-500 hover:bg-rose-600 hover:text-white">
-                    <i class="fa-brands fa-tiktok text-3xl mb-1"></i>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">TikTok</span>
+                <button onclick="handleAction('messenger')" class="group flex flex-col items-center justify-center p-5 rounded-[2rem] bg-white border border-slate-100 hover:border-blue-400 hover:bg-blue-50 transition-all active:scale-95">
+                    <i class="fa-brands fa-facebook-messenger text-2xl text-blue-600 mb-2"></i>
+                    <span class="text-[9px] font-black text-slate-500 uppercase">Messenger</span>
+                </button>
+
+                <button onclick="handleAction('tiktok')" class="group flex flex-col items-center justify-center p-5 rounded-[2rem] bg-white border border-slate-100 hover:border-blue-400 hover:bg-blue-50 transition-all active:scale-95">
+                    <i class="fa-brands fa-tiktok text-2xl text-slate-900 mb-2"></i>
+                    <span class="text-[9px] font-black text-slate-500 uppercase">TikTok</span>
                 </button>
             </div>
-
-            <button onclick="resetInputs()" class="w-full py-4 text-slate-700 font-bold text-xs hover:text-slate-500 transition-soft">
-                <i class="fas fa-rotate-left mr-2"></i>Clear All Data
-            </button>
         </div>
 
-        <!-- Bottom Profile Section -->
-        <div class="px-8 py-8 border-t border-slate-800/50 text-center bg-black/20">
-            <p id="lastUpdated" class="text-[9px] text-slate-700 uppercase tracking-[0.2em] font-black mb-4 italic">Digital Nest Exchange Service</p>
-            <div class="flex justify-center items-center">
-                <a href="https://bhonepyaesone.vercel.app/" target="_blank" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-[0.3em] hover:text-indigo-300 transition-colors">Developer Profile</a>
+        <!-- Bottom Info -->
+        <div class="mt-8 text-center space-y-4">
+            <div id="rateBox" class="inline-block px-6 py-2 bg-white rounded-full shadow-sm border border-blue-50">
+                <p id="rateLabel" class="text-[10px] text-blue-600 font-bold uppercase tracking-widest">Rate: 1 THB = 0.00 MMK</p>
+            </div>
+            <div>
+                <a href="https://bhonepyaesone.vercel.app/" class="text-[10px] font-bold text-slate-400 hover:text-blue-500 transition-colors tracking-widest uppercase">Developer Portfolio</a>
             </div>
         </div>
     </div>
 
     <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-10 left-6 right-6 sm:left-auto sm:right-auto bg-indigo-600 text-white p-5 rounded-3xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 font-black text-sm flex items-center justify-center space-x-3 border border-indigo-400">
-        <i class="fas fa-copy"></i>
-        <span id="toastMessage">သိမ်းဆည်းပြီးပါပြီ</span>
+    <div id="toast" class="fixed top-10 bg-slate-900 text-white px-8 py-4 rounded-full text-[12px] font-bold shadow-2xl opacity-0 -translate-y-4 pointer-events-none transition-all duration-500 z-50 flex items-center space-x-3">
+        <i class="fas fa-check-circle text-blue-400"></i>
+        <span id="toastMsg">Success</span>
     </div>
 
     <script>
         const CONFIG = {
-            DEFAULT_RATES: { market: 120.83, official: 67.2 },
+            RATES: { market: 120.83, official: 67.2 },
             SOCIAL: {
-                telegram: "https://t.me/digitalnest001",
+                telegram: "https://t.me/c/2810421293/13356",
                 messenger: "https://m.me/digitalnest30",
                 tiktok: "https://www.tiktok.com/@digitalnestbatch6"
             },
-            PAYMENT_DETAILS: "HTET NAUNG SOE\nKASIKORN (k+)\n1893964815"
+            PAYMENT: "HTET NAUNG SOE\nKASIKORN (k+)\n1893964815"
         };
 
-        let state = {
-            rates: { ...CONFIG.DEFAULT_RATES },
-            mode: 'market',
-            currentRate: CONFIG.DEFAULT_RATES.market
+        let state = { mode: 'market', rate: 120.83 };
+
+        const thbEl = document.getElementById('thbInput');
+        const mmkEl = document.getElementById('mmkInput');
+        const rateLabel = document.getElementById('rateLabel');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+
+        function updateRate() {
+            state.rate = CONFIG.RATES[state.mode];
+            rateLabel.innerText = `Rate: 1 THB = ${state.rate.toFixed(2)} MMK`;
+            if (thbEl.value) mmkEl.value = Math.round(thbEl.value * state.rate);
+        }
+
+        thbEl.addEventListener('input', (e) => {
+            if (!e.target.value) { mmkEl.value = ''; return; }
+            mmkEl.value = Math.round(e.target.value * state.rate);
+        });
+
+        mmkEl.addEventListener('input', (e) => {
+            if (!e.target.value) { thbEl.value = ''; return; }
+            thbEl.value = (e.target.value / state.rate).toFixed(2);
+        });
+
+        document.getElementById('marketBtn').onclick = (e) => {
+            state.mode = 'market';
+            e.target.classList.add('active');
+            document.getElementById('officialBtn').classList.remove('active');
+            updateRate();
         };
 
-        const elements = {
-            thb: document.getElementById('thbInput'),
-            mmk: document.getElementById('mmkInput'),
-            display: document.getElementById('currentRateDisplay'),
-            updated: document.getElementById('lastUpdated'),
-            mBtn: document.getElementById('marketBtn'),
-            oBtn: document.getElementById('officialBtn'),
-            loader: document.getElementById('rateLoading'),
-            sync: document.getElementById('syncIcon'),
-            toast: document.getElementById('toast'),
-            toastMsg: document.getElementById('toastMessage')
+        document.getElementById('officialBtn').onclick = (e) => {
+            state.mode = 'official';
+            e.target.classList.add('active');
+            document.getElementById('marketBtn').classList.remove('active');
+            updateRate();
         };
 
-        async function fetchLatestRates() {
-            elements.loader.style.opacity = '1';
-            elements.sync.classList.add('fa-spin');
-            await new Promise(r => setTimeout(r, 600));
-            updateUI();
-            elements.loader.style.opacity = '0';
-            elements.sync.classList.remove('fa-spin');
-        }
-
-        function updateUI() {
-            state.currentRate = state.rates[state.mode];
-            elements.display.innerText = state.currentRate.toLocaleString(undefined, { minimumFractionDigits: 2 });
-            
-            const active = "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
-            const inactive = "text-slate-600 hover:text-slate-400";
-
-            if (state.mode === 'market') {
-                elements.mBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${active}`;
-                elements.oBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${inactive}`;
-            } else {
-                elements.oBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${active}`;
-                elements.mBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${inactive}`;
-            }
-
-            if (elements.thb.value) syncFromThb(elements.thb.value);
-            const now = new Date();
-            elements.updated.innerText = `Updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | Digital Nest`;
-        }
-
-        function syncFromThb(val) {
-            if (!val || val < 0) { elements.mmk.value = ''; return; }
-            elements.mmk.value = Math.round(parseFloat(val) * state.currentRate);
-        }
-
-        function syncFromMmk(val) {
-            if (!val || val < 0) { elements.thb.value = ''; return; }
-            elements.thb.value = (parseFloat(val) / state.currentRate).toFixed(2);
-        }
-
-        elements.thb.addEventListener('input', (e) => syncFromThb(e.target.value));
-        elements.mmk.addEventListener('input', (e) => syncFromMmk(e.target.value));
-        elements.mBtn.addEventListener('click', () => { state.mode = 'market'; updateUI(); });
-        elements.oBtn.addEventListener('click', () => { state.mode = 'official'; updateUI(); });
-
-        function resetInputs() {
-            elements.thb.value = '';
-            elements.mmk.value = '';
-        }
-
-        function handleSocialAction(platform) {
-            if (!elements.mmk.value || elements.mmk.value <= 0) {
-                elements.toastMsg.innerText = "ပမာဏ အရင်ရိုက်ထည့်ပါ";
-                showToast();
+        function handleAction(platform) {
+            if (!mmkEl.value) {
+                showToast("ပမာဏ အရင်ရိုက်ထည့်ပါ");
                 return;
             }
 
-            const resultText = `🦅 Digital Nest Exchange\n━━━━━━━━━━━━━━\n🇹🇭 ${elements.thb.value} Baht\n🇲🇲 ${elements.mmk.value} Kyats\n━━━━━━━━━━━━━━\n💹 Rate: 1 THB = ${state.currentRate.toFixed(2)} MMK\n━━━━━━━━━━━━━━\n💳 Payment Detail:\n${CONFIG.PAYMENT_DETAILS}\n━━━━━━━━━━━━━━\n📅 ${new Date().toLocaleString()}`;
+            const text = `🦅 Digital Nest Exchange\n\n🇹🇭 ${thbEl.value} Baht\n🇲🇲 ${mmkEl.value} Kyats\n\nRate: 1 THB = ${state.rate.toFixed(2)} MMK\n\n💳 Payment Info:\n${CONFIG.PAYMENT}\n\n📅 ${new Date().toLocaleString()}`;
             
-            // Clipboard logic
-            const temp = document.createElement('textarea');
-            temp.value = resultText;
-            document.body.appendChild(temp);
-            temp.select();
+            const area = document.createElement('textarea');
+            area.value = text;
+            document.body.appendChild(area);
+            area.select();
             document.execCommand('copy');
-            document.body.removeChild(temp);
+            document.body.removeChild(area);
 
-            elements.toastMsg.innerText = "Copied Result! Opening App...";
-            showToast();
+            showToast("Copied & Redirecting...");
 
-            // Navigation logic
             setTimeout(() => {
-                if (platform === 'telegram') {
-                    const encoded = encodeURIComponent(resultText);
-                    window.open(`https://t.me/share/url?url=${CONFIG.SOCIAL.telegram}&text=${encoded}`, '_blank');
-                } else {
-                    window.open(CONFIG.SOCIAL[platform], '_blank');
-                }
+                window.open(CONFIG.SOCIAL[platform], '_blank');
             }, 800);
         }
 
-        function showToast() {
-            elements.toast.classList.replace('opacity-0', 'opacity-100');
-            elements.toast.classList.replace('translate-y-4', 'translate-y-0');
+        function showToast(msg) {
+            toastMsg.innerText = msg;
+            toast.classList.replace('opacity-0', 'opacity-100');
+            toast.classList.replace('-translate-y-4', 'translate-y-0');
             setTimeout(() => {
-                elements.toast.classList.replace('opacity-100', 'opacity-0');
-                elements.toast.classList.replace('translate-y-0', 'translate-y-4');
+                toast.classList.replace('opacity-100', 'opacity-0');
+                toast.classList.replace('translate-y-0', '-translate-y-4');
             }, 2500);
         }
 
-        window.onload = fetchLatestRates;
+        updateRate();
     </script>
 </body>
 </html>

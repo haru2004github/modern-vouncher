@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Digital Nest | Mobile Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
+        body { 
+            font-family: 'Pyidaungsu', 'Inter', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        input::-webkit-outer-spin-button, 
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.03) 50%, transparent 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Smooth Transition for Mobile */
+        .transition-soft {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-black text-slate-100 min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-0 sm:p-4 overflow-x-hidden">
+
+    <!-- Mobile Top Bar Decoration -->
+    <div class="w-full h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 fixed top-0 z-50 sm:hidden"></div>
+
+    <!-- Main Container -->
+    <div class="w-full max-w-md min-h-screen sm:min-h-0 sm:rounded-[3rem] glass-card shadow-2xl flex flex-col relative overflow-hidden border-x-0 sm:border-x border-slate-800">
+        
+        <!-- Live Status Badge -->
+        <div class="absolute top-6 right-6 flex items-center space-x-2 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md z-20">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-[9px] font-black text-green-400 uppercase tracking-widest">Live</span>
+        </div>
+
+        <!-- Header: Mobile Optimized -->
+        <div class="relative pt-12 pb-14 px-8 text-center bg-gradient-to-b from-indigo-950/30 to-transparent">
+            <div class="relative inline-block mb-4">
+                <div class="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse"></div>
+                <div class="relative w-24 h-24 mx-auto rounded-3xl overflow-hidden border-2 border-white/5 shadow-2xl transition-soft hover:scale-105">
+                    <img src="photo_2025-07-10_11-03-43.jpg" alt="Digital Nest Logo" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Digital+Nest&background=4f46e5&color=fff&size=128'">
+                </div>
+            </div>
+            <h1 class="text-3xl font-black tracking-tight text-white mb-1">Digital Nest</h1>
+            <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-90">Exchange Solution</p>
+        </div>
+
+        <!-- Converter Body -->
+        <div class="flex-1 px-6 pb-10 -mt-6 space-y-5">
+            
+            <!-- Rate Type Toggle: Large Touch Targets -->
+            <div class="flex bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/50 backdrop-blur-md">
+                <button id="marketBtn" class="flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft bg-indigo-600 text-white shadow-lg">
+                    ပြင်ပပေါက်ဈေး
+                </button>
+                <button id="officialBtn" class="flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft text-slate-500">
+                    ဗဟိုဘဏ်
+                </button>
+            </div>
+
+            <!-- Current Rate Display -->
+            <div class="bg-white/5 rounded-[2rem] p-6 border border-white/5 flex justify-between items-center group relative overflow-hidden">
+                <div id="rateLoading" class="absolute inset-0 shimmer opacity-0 pointer-events-none transition-opacity duration-300"></div>
+                <div class="relative z-10">
+                    <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest block mb-1">Current Rate</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="currentRateDisplay" class="text-4xl font-black text-white tracking-tighter">0.00</span>
+                        <span class="text-indigo-400 font-bold text-xs uppercase">MMK</span>
+                    </div>
+                </div>
+                <button onclick="fetchLatestRates()" class="relative z-10 bg-slate-800/80 p-4 rounded-2xl border border-slate-700 active:scale-90 transition-soft">
+                    <i class="fas fa-sync-alt text-indigo-400" id="syncIcon"></i>
+                </button>
+            </div>
+
+            <!-- Inputs: Mobile Optimized Spacing -->
+            <div class="space-y-3">
+                <!-- THB Input -->
+                <div class="relative group">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase ml-5 mb-2 tracking-widest">Thai Baht (THB)</label>
+                    <div class="relative">
+                        <input type="number" id="thbInput" inputmode="decimal" placeholder="0.00" 
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[1.5rem] py-6 px-7 text-3xl font-black focus:border-indigo-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800">
+                        <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end">
+                            <img src="https://flagcdn.com/w40/th.png" alt="TH" class="w-6 h-4 rounded-sm shadow-sm mb-1">
+                            <span class="text-slate-600 font-black text-[10px]">THB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Divider -->
+                <div class="flex justify-center -my-4 relative z-20">
+                    <div class="bg-indigo-600 p-3 rounded-full shadow-xl border-4 border-slate-950">
+                        <i class="fas fa-arrow-down text-white text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- MMK Input -->
+                <div class="relative group">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase ml-5 mb-2 tracking-widest">Myanmar Kyat (MMK)</label>
+                    <div class="relative">
+                        <input type="number" id="mmkInput" inputmode="numeric" placeholder="0" 
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[1.5rem] py-6 px-7 text-3xl font-black focus:border-green-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800 text-green-400">
+                        <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end">
+                            <img src="https://flagcdn.com/w40/mm.png" alt="MM" class="w-6 h-4 rounded-sm shadow-sm mb-1">
+                            <span class="text-slate-600 font-black text-[10px]">MMK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="pt-4 space-y-4">
+                <button onclick="copyToClipboard()" class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-base shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-soft">
+                    <i class="far fa-copy mr-2"></i> Copy Result
+                </button>
+                <button onclick="resetInputs()" class="w-full py-4 text-slate-500 font-bold text-sm hover:text-slate-300 transition-soft">
+                    Clear Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="px-8 py-8 border-t border-slate-800/50 text-center bg-black/20">
+            <p id="lastUpdated" class="text-[9px] text-slate-600 uppercase tracking-[0.2em] font-black mb-4 italic">Digital Nest Exchange Service</p>
+            <div class="flex justify-center items-center space-x-8">
+                <a href="#" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest">Telegram</a>
+                <span class="w-1.5 h-1.5 bg-slate-800 rounded-full"></span>
+                <a href="https://bhonepyaesone.vercel.app/" target="_blank" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest">Developer</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Toast -->
+    <div id="toast" class="fixed bottom-8 left-6 right-6 sm:left-auto sm:right-auto bg-indigo-600 text-white p-5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 font-black text-sm flex items-center justify-center space-x-3 border border-indigo-400">
+        <i class="fas fa-check-circle"></i>
+        <span>သိမ်းဆည်းပြီးပါပြီ</span>
+    </div>
+
+    <script>
+        const CONFIG = {
+            DEFAULT_RATES: {
+                market: 120.83, // 29000 / 240
+                official: 67.2
+            }
+        };
+
+        let state = {
+            rates: { ...CONFIG.DEFAULT_RATES },
+            mode: 'market',
+            currentRate: CONFIG.DEFAULT_RATES.market
+        };
+
+        const elements = {
+            thb: document.getElementById('thbInput'),
+            mmk: document.getElementById('mmkInput'),
+            display: document.getElementById('currentRateDisplay'),
+            updated: document.getElementById('lastUpdated'),
+            mBtn: document.getElementById('marketBtn'),
+            oBtn: document.getElementById('officialBtn'),
+            loader: document.getElementById('rateLoading'),
+            sync: document.getElementById('syncIcon'),
+            toast: document.getElementById('toast')
+        };
+
+        async function fetchLatestRates() {
+            elements.loader.style.opacity = '1';
+            elements.sync.classList.add('fa-spin');
+            await new Promise(r => setTimeout(r, 600));
+            updateUI();
+            elements.loader.style.opacity = '0';
+            elements.sync.classList.remove('fa-spin');
+        }
+
+        function updateUI() {
+            state.currentRate = state.rates[state.mode];
+            elements.display.innerText = state.currentRate.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            
+            const active = "bg-indigo-600 text-white shadow-lg";
+            const inactive = "text-slate-500 hover:text-slate-300";
+
+            if (state.mode === 'market') {
+                elements.mBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${active}`;
+                elements.oBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${inactive}`;
+            } else {
+                elements.oBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${active}`;
+                elements.mBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${inactive}`;
+            }
+
+            if (elements.thb.value) syncFromThb(elements.thb.value);
+            const now = new Date();
+            elements.updated.innerText = `Updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | Digital Nest`;
+        }
+
+        function syncFromThb(val) {
+            if (!val || val < 0) { elements.mmk.value = ''; return; }
+            elements.mmk.value = Math.round(parseFloat(val) * state.currentRate);
+        }
+
+        function syncFromMmk(val) {
+            if (!val || val < 0) { elements.thb.value = ''; return; }
+            elements.thb.value = (parseFloat(val) / state.currentRate).toFixed(2);
+        }
+
+        elements.thb.addEventListener('input', (e) => syncFromThb(e.target.value));
+        elements.mmk.addEventListener('input', (e) => syncFromMmk(e.target.value));
+        elements.mBtn.addEventListener('click', () => { state.mode = 'market'; updateUI(); });
+        elements.oBtn.addEventListener('click', () => { state.mode = 'official'; updateUI(); });
+
+        function resetInputs() {
+            elements.thb.value = '';
+            elements.mmk.value = '';
+        }
+
+        function copyToClipboard() {
+            if (!elements.mmk.value) return;
+            const text = `🦅 Digital Nest Exchange\n━━━━━━━━━━━━━━\n🇹🇭 ${elements.thb.value} Baht\n🇲🇲 ${elements.mmk.value} Kyats\n━━━━━━━━━━━━━━\n💹 Rate: 1 THB = ${state.currentRate.toFixed(2)} MMK\n📅 ${new Date().toLocaleString()}`;
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast();
+        }
+
+        function showToast() {
+            elements.toast.classList.replace('opacity-0', 'opacity-100');
+            setTimeout(() => elements.toast.classList.replace('opacity-100', 'opacity-0'), 2000);
+        }
+
+        window.onload = fetchLatestRates;
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Digital Nest | Mobile Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
         body { 
@@ -37,17 +37,21 @@
         .transition-soft {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        
+        .social-btn {
+            @apply flex flex-col items-center justify-center p-5 rounded-[2rem] border transition-soft active:scale-90 shadow-lg;
+        }
     </style>
 </head>
 <body class="bg-black text-slate-100 min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-0 sm:p-4 overflow-x-hidden">
 
-    <!-- Mobile Top Bar Decoration -->
+    <!-- Top Gradient Bar -->
     <div class="w-full h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 fixed top-0 z-50 sm:hidden"></div>
 
     <!-- Main Container -->
     <div class="w-full max-w-md min-h-screen sm:min-h-0 sm:rounded-[3rem] glass-card shadow-2xl flex flex-col relative overflow-hidden border-x-0 sm:border-x border-slate-800">
         
-        <!-- Live Status Badge -->
+        <!-- Live Badge -->
         <div class="absolute top-6 right-6 flex items-center space-x-2 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md z-20">
             <span class="relative flex h-2 w-2">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -56,7 +60,7 @@
             <span class="text-[9px] font-black text-green-400 uppercase tracking-widest">Live</span>
         </div>
 
-        <!-- Header: Mobile Optimized -->
+        <!-- Header Section -->
         <div class="relative pt-12 pb-14 px-8 text-center bg-gradient-to-b from-indigo-950/30 to-transparent">
             <div class="relative inline-block mb-4">
                 <div class="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse"></div>
@@ -68,10 +72,10 @@
             <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-90">Exchange Solution</p>
         </div>
 
-        <!-- Converter Body -->
-        <div class="flex-1 px-6 pb-10 -mt-6 space-y-5">
+        <!-- Main Body -->
+        <div class="flex-1 px-6 pb-6 -mt-6 space-y-6">
             
-            <!-- Rate Type Toggle -->
+            <!-- Rate Mode Switcher -->
             <div class="flex bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/50 backdrop-blur-md">
                 <button id="marketBtn" class="flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft bg-indigo-600 text-white shadow-lg">
                     ပြင်ပပေါက်ဈေး
@@ -81,89 +85,101 @@
                 </button>
             </div>
 
-            <!-- Current Rate Display -->
-            <div class="bg-white/5 rounded-[2rem] p-6 border border-white/5 flex justify-between items-center group relative overflow-hidden">
+            <!-- Rate Display Box -->
+            <div class="bg-white/5 rounded-[2.5rem] p-7 border border-white/5 flex justify-between items-center group relative overflow-hidden">
                 <div id="rateLoading" class="absolute inset-0 shimmer opacity-0 pointer-events-none transition-opacity duration-300"></div>
                 <div class="relative z-10">
                     <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest block mb-1">Current Rate</span>
                     <div class="flex items-baseline space-x-2">
                         <span id="currentRateDisplay" class="text-4xl font-black text-white tracking-tighter">0.00</span>
-                        <span class="text-indigo-400 font-bold text-xs uppercase">MMK</span>
+                        <span class="text-indigo-400 font-bold text-xs uppercase tracking-widest">MMK</span>
                     </div>
                 </div>
                 <button onclick="fetchLatestRates()" class="relative z-10 bg-slate-800/80 p-4 rounded-2xl border border-slate-700 active:scale-90 transition-soft">
-                    <i class="fas fa-sync-alt text-indigo-400" id="syncIcon"></i>
+                    <i class="fas fa-arrows-rotate text-indigo-400" id="syncIcon"></i>
                 </button>
             </div>
 
-            <!-- Inputs -->
+            <!-- Currency Inputs -->
             <div class="space-y-3">
                 <div class="relative group">
-                    <label class="block text-[9px] font-black text-slate-500 uppercase ml-5 mb-2 tracking-widest">Thai Baht (THB)</label>
                     <div class="relative">
                         <input type="number" id="thbInput" inputmode="decimal" placeholder="0.00" 
-                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[1.5rem] py-6 px-7 text-3xl font-black focus:border-indigo-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800">
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[2rem] py-6 px-7 text-3xl font-black focus:border-indigo-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800">
                         <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end">
                             <img src="https://flagcdn.com/w40/th.png" alt="TH" class="w-6 h-4 rounded-sm shadow-sm mb-1">
-                            <span class="text-slate-600 font-black text-[10px]">THB</span>
+                            <span class="text-slate-600 font-black text-[10px] tracking-widest">THB</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-center -my-4 relative z-20">
                     <div class="bg-indigo-600 p-3 rounded-full shadow-xl border-4 border-slate-950">
-                        <i class="fas fa-arrow-down text-white text-sm"></i>
+                        <i class="fas fa-chevron-down text-white text-sm"></i>
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <label class="block text-[9px] font-black text-slate-500 uppercase ml-5 mb-2 tracking-widest">Myanmar Kyat (MMK)</label>
                     <div class="relative">
                         <input type="number" id="mmkInput" inputmode="numeric" placeholder="0" 
-                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[1.5rem] py-6 px-7 text-3xl font-black focus:border-green-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800 text-green-400">
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-[2rem] py-6 px-7 text-3xl font-black focus:border-green-500 focus:ring-0 focus:outline-none transition-soft placeholder:text-slate-800 text-green-400">
                         <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-end">
                             <img src="https://flagcdn.com/w40/mm.png" alt="MM" class="w-6 h-4 rounded-sm shadow-sm mb-1">
-                            <span class="text-slate-600 font-black text-[10px]">MMK</span>
+                            <span class="text-slate-600 font-black text-[10px] tracking-widest">MMK</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Footer Actions -->
-            <div class="pt-4 space-y-4">
-                <button onclick="handleSendAndCopy()" class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-base shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-soft flex items-center justify-center space-x-2">
-                    <i class="fab fa-telegram-plane"></i>
-                    <span>Send to Telegram</span>
+            <!-- Social Action Grid -->
+            <div class="grid grid-cols-3 gap-3 pt-2">
+                <!-- Telegram (Copy + Auto-Text) -->
+                <button onclick="handleSocialAction('telegram')" class="social-btn bg-sky-500/10 border-sky-500/20 text-sky-400 hover:bg-sky-500 hover:text-white">
+                    <i class="fa-brands fa-telegram text-3xl mb-1"></i>
+                    <span class="text-[9px] font-black uppercase tracking-tighter">Telegram</span>
                 </button>
-                <button onclick="resetInputs()" class="w-full py-4 text-slate-500 font-bold text-sm hover:text-slate-300 transition-soft">
-                    Clear Data
+                
+                <!-- Messenger (Copy + Redirect) -->
+                <button onclick="handleSocialAction('messenger')" class="social-btn bg-blue-600/10 border-blue-600/20 text-blue-500 hover:bg-blue-600 hover:text-white">
+                    <i class="fa-brands fa-facebook-messenger text-3xl mb-1"></i>
+                    <span class="text-[9px] font-black uppercase tracking-tighter">Messenger</span>
+                </button>
+
+                <!-- TikTok (Copy + Redirect) -->
+                <button onclick="handleSocialAction('tiktok')" class="social-btn bg-rose-600/10 border-rose-600/20 text-rose-500 hover:bg-rose-600 hover:text-white">
+                    <i class="fa-brands fa-tiktok text-3xl mb-1"></i>
+                    <span class="text-[9px] font-black uppercase tracking-tighter">TikTok</span>
                 </button>
             </div>
+
+            <button onclick="resetInputs()" class="w-full py-4 text-slate-700 font-bold text-xs hover:text-slate-500 transition-soft">
+                <i class="fas fa-rotate-left mr-2"></i>Clear All Data
+            </button>
         </div>
 
-        <!-- Footer Info -->
-        <div class="px-8 py-10 border-t border-slate-800/50 text-center bg-black/20">
-            <p id="lastUpdated" class="text-[9px] text-slate-600 uppercase tracking-[0.2em] font-black mb-4 italic">Digital Nest Exchange Service</p>
+        <!-- Bottom Profile Section -->
+        <div class="px-8 py-8 border-t border-slate-800/50 text-center bg-black/20">
+            <p id="lastUpdated" class="text-[9px] text-slate-700 uppercase tracking-[0.2em] font-black mb-4 italic">Digital Nest Exchange Service</p>
             <div class="flex justify-center items-center">
-                <a href="https://bhone-pyae-sone.vercel.app/" target="_blank" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-[0.3em] hover:text-indigo-300 transition-colors">Developer Profile</a>
+                <a href="https://bhonepyaesone.vercel.app/" target="_blank" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-[0.3em] hover:text-indigo-300 transition-colors">Developer Profile</a>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Toast -->
-    <div id="toast" class="fixed bottom-8 left-6 right-6 sm:left-auto sm:right-auto bg-indigo-600 text-white p-5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 font-black text-sm flex items-center justify-center space-x-3 border border-indigo-400">
-        <i class="fas fa-check-circle"></i>
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 left-6 right-6 sm:left-auto sm:right-auto bg-indigo-600 text-white p-5 rounded-3xl shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300 z-50 font-black text-sm flex items-center justify-center space-x-3 border border-indigo-400">
+        <i class="fas fa-copy"></i>
         <span id="toastMessage">သိမ်းဆည်းပြီးပါပြီ</span>
     </div>
 
     <script>
         const CONFIG = {
-            DEFAULT_RATES: {
-                market: 120.83,
-                official: 67.2
+            DEFAULT_RATES: { market: 120.83, official: 67.2 },
+            SOCIAL: {
+                telegram: "https://t.me/digitalnest001",
+                messenger: "https://m.me/digitalnest30",
+                tiktok: "https://www.tiktok.com/@digitalnestbatch6"
             },
-            // Note: Telegram link with chat id might vary by client; using share URL for auto-text stability
-            TELEGRAM_BASE: "https://t.me/share/url",
             PAYMENT_DETAILS: "HTET NAUNG SOE\nKASIKORN (k+)\n1893964815"
         };
 
@@ -199,8 +215,8 @@
             state.currentRate = state.rates[state.mode];
             elements.display.innerText = state.currentRate.toLocaleString(undefined, { minimumFractionDigits: 2 });
             
-            const active = "bg-indigo-600 text-white shadow-lg";
-            const inactive = "text-slate-500 hover:text-slate-300";
+            const active = "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+            const inactive = "text-slate-600 hover:text-slate-400";
 
             if (state.mode === 'market') {
                 elements.mBtn.className = `flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft ${active}`;
@@ -235,39 +251,44 @@
             elements.mmk.value = '';
         }
 
-        function handleSendAndCopy() {
-            if (!elements.mmk.value) {
-                elements.toastMsg.innerText = "ပမာဏရိုက်ထည့်ပါ";
+        function handleSocialAction(platform) {
+            if (!elements.mmk.value || elements.mmk.value <= 0) {
+                elements.toastMsg.innerText = "ပမာဏ အရင်ရိုက်ထည့်ပါ";
                 showToast();
                 return;
             }
 
-            const text = `🦅 Digital Nest Exchange\n━━━━━━━━━━━━━━\n🇹🇭 ${elements.thb.value} Baht\n🇲🇲 ${elements.mmk.value} Kyats\n━━━━━━━━━━━━━━\n💹 Rate: 1 THB = ${state.currentRate.toFixed(2)} MMK\n━━━━━━━━━━━━━━\n💳 Payment Detail:\n${CONFIG.PAYMENT_DETAILS}\n━━━━━━━━━━━━━━\n📅 ${new Date().toLocaleString()}`;
+            const resultText = `🦅 Digital Nest Exchange\n━━━━━━━━━━━━━━\n🇹🇭 ${elements.thb.value} Baht\n🇲🇲 ${elements.mmk.value} Kyats\n━━━━━━━━━━━━━━\n💹 Rate: 1 THB = ${state.currentRate.toFixed(2)} MMK\n━━━━━━━━━━━━━━\n💳 Payment Detail:\n${CONFIG.PAYMENT_DETAILS}\n━━━━━━━━━━━━━━\n📅 ${new Date().toLocaleString()}`;
             
-            // Clipboard Copy
+            // Clipboard logic
             const temp = document.createElement('textarea');
-            temp.value = text;
+            temp.value = resultText;
             document.body.appendChild(temp);
             temp.select();
             document.execCommand('copy');
             document.body.removeChild(temp);
 
-            elements.toastMsg.innerText = "Copied & Redirecting...";
+            elements.toastMsg.innerText = "Copied Result! Opening App...";
             showToast();
 
-            // Auto-text URL Generation
-            // Encode for URL to ensure special characters and newlines are preserved
-            const encodedText = encodeURIComponent(text);
-            const telegramUrl = `${CONFIG.TELEGRAM_BASE}?url=${encodedText}`;
-
+            // Navigation logic
             setTimeout(() => {
-                window.open(telegramUrl, '_blank');
-            }, 600);
+                if (platform === 'telegram') {
+                    const encoded = encodeURIComponent(resultText);
+                    window.open(`https://t.me/share/url?url=${CONFIG.SOCIAL.telegram}&text=${encoded}`, '_blank');
+                } else {
+                    window.open(CONFIG.SOCIAL[platform], '_blank');
+                }
+            }, 800);
         }
 
         function showToast() {
             elements.toast.classList.replace('opacity-0', 'opacity-100');
-            setTimeout(() => elements.toast.classList.replace('opacity-100', 'opacity-0'), 2500);
+            elements.toast.classList.replace('translate-y-4', 'translate-y-0');
+            setTimeout(() => {
+                elements.toast.classList.replace('opacity-100', 'opacity-0');
+                elements.toast.classList.replace('translate-y-0', 'translate-y-4');
+            }, 2500);
         }
 
         window.onload = fetchLatestRates;

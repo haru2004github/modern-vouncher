@@ -34,7 +34,6 @@
             100% { background-position: -200% 0; }
         }
 
-        /* Smooth Transition for Mobile */
         .transition-soft {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -72,7 +71,7 @@
         <!-- Converter Body -->
         <div class="flex-1 px-6 pb-10 -mt-6 space-y-5">
             
-            <!-- Rate Type Toggle: Large Touch Targets -->
+            <!-- Rate Type Toggle -->
             <div class="flex bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/50 backdrop-blur-md">
                 <button id="marketBtn" class="flex-1 py-4 px-2 rounded-xl text-xs font-black transition-soft bg-indigo-600 text-white shadow-lg">
                     ပြင်ပပေါက်ဈေး
@@ -97,9 +96,8 @@
                 </button>
             </div>
 
-            <!-- Inputs: Mobile Optimized Spacing -->
+            <!-- Inputs -->
             <div class="space-y-3">
-                <!-- THB Input -->
                 <div class="relative group">
                     <label class="block text-[9px] font-black text-slate-500 uppercase ml-5 mb-2 tracking-widest">Thai Baht (THB)</label>
                     <div class="relative">
@@ -112,14 +110,12 @@
                     </div>
                 </div>
 
-                <!-- Center Divider -->
                 <div class="flex justify-center -my-4 relative z-20">
                     <div class="bg-indigo-600 p-3 rounded-full shadow-xl border-4 border-slate-950">
                         <i class="fas fa-arrow-down text-white text-sm"></i>
                     </div>
                 </div>
 
-                <!-- MMK Input -->
                 <div class="relative group">
                     <label class="block text-[9px] font-black text-slate-500 uppercase ml-5 mb-2 tracking-widest">Myanmar Kyat (MMK)</label>
                     <div class="relative">
@@ -135,8 +131,9 @@
 
             <!-- Footer Actions -->
             <div class="pt-4 space-y-4">
-                <button onclick="copyToClipboard()" class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-base shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-soft">
-                    <i class="far fa-copy mr-2"></i> Copy Result
+                <button onclick="handleSendAndCopy()" class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-base shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-soft flex items-center justify-center space-x-2">
+                    <i class="fab fa-telegram-plane"></i>
+                    <span>Send to Telegram</span>
                 </button>
                 <button onclick="resetInputs()" class="w-full py-4 text-slate-500 font-bold text-sm hover:text-slate-300 transition-soft">
                     Clear Data
@@ -145,12 +142,10 @@
         </div>
 
         <!-- Footer Info -->
-        <div class="px-8 py-8 border-t border-slate-800/50 text-center bg-black/20">
+        <div class="px-8 py-10 border-t border-slate-800/50 text-center bg-black/20">
             <p id="lastUpdated" class="text-[9px] text-slate-600 uppercase tracking-[0.2em] font-black mb-4 italic">Digital Nest Exchange Service</p>
-            <div class="flex justify-center items-center space-x-8">
-                <a href="#" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest">Telegram</a>
-                <span class="w-1.5 h-1.5 bg-slate-800 rounded-full"></span>
-                <a href="https://bhonepyaesone.vercel.app/" target="_blank" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest">Developer</a>
+            <div class="flex justify-center items-center">
+                <a href="https://bhone-pyae-sone.vercel.app/" target="_blank" class="text-[10px] font-black text-indigo-400/80 uppercase tracking-[0.3em] hover:text-indigo-300 transition-colors">Developer Profile</a>
             </div>
         </div>
     </div>
@@ -158,15 +153,18 @@
     <!-- Mobile Toast -->
     <div id="toast" class="fixed bottom-8 left-6 right-6 sm:left-auto sm:right-auto bg-indigo-600 text-white p-5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 font-black text-sm flex items-center justify-center space-x-3 border border-indigo-400">
         <i class="fas fa-check-circle"></i>
-        <span>သိမ်းဆည်းပြီးပါပြီ</span>
+        <span id="toastMessage">သိမ်းဆည်းပြီးပါပြီ</span>
     </div>
 
     <script>
         const CONFIG = {
             DEFAULT_RATES: {
-                market: 120.83, // 29000 / 240
+                market: 120.83,
                 official: 67.2
-            }
+            },
+            // Note: Telegram link with chat id might vary by client; using share URL for auto-text stability
+            TELEGRAM_BASE: "https://t.me/share/url",
+            PAYMENT_DETAILS: "HTET NAUNG SOE\nKASIKORN (k+)\n1893964815"
         };
 
         let state = {
@@ -184,7 +182,8 @@
             oBtn: document.getElementById('officialBtn'),
             loader: document.getElementById('rateLoading'),
             sync: document.getElementById('syncIcon'),
-            toast: document.getElementById('toast')
+            toast: document.getElementById('toast'),
+            toastMsg: document.getElementById('toastMessage')
         };
 
         async function fetchLatestRates() {
@@ -236,21 +235,39 @@
             elements.mmk.value = '';
         }
 
-        function copyToClipboard() {
-            if (!elements.mmk.value) return;
-            const text = `🦅 Digital Nest Exchange\n━━━━━━━━━━━━━━\n🇹🇭 ${elements.thb.value} Baht\n🇲🇲 ${elements.mmk.value} Kyats\n━━━━━━━━━━━━━━\n💹 Rate: 1 THB = ${state.currentRate.toFixed(2)} MMK\n📅 ${new Date().toLocaleString()}`;
+        function handleSendAndCopy() {
+            if (!elements.mmk.value) {
+                elements.toastMsg.innerText = "ပမာဏရိုက်ထည့်ပါ";
+                showToast();
+                return;
+            }
+
+            const text = `🦅 Digital Nest Exchange\n━━━━━━━━━━━━━━\n🇹🇭 ${elements.thb.value} Baht\n🇲🇲 ${elements.mmk.value} Kyats\n━━━━━━━━━━━━━━\n💹 Rate: 1 THB = ${state.currentRate.toFixed(2)} MMK\n━━━━━━━━━━━━━━\n💳 Payment Detail:\n${CONFIG.PAYMENT_DETAILS}\n━━━━━━━━━━━━━━\n📅 ${new Date().toLocaleString()}`;
+            
+            // Clipboard Copy
             const temp = document.createElement('textarea');
             temp.value = text;
             document.body.appendChild(temp);
             temp.select();
             document.execCommand('copy');
             document.body.removeChild(temp);
+
+            elements.toastMsg.innerText = "Copied & Redirecting...";
             showToast();
+
+            // Auto-text URL Generation
+            // Encode for URL to ensure special characters and newlines are preserved
+            const encodedText = encodeURIComponent(text);
+            const telegramUrl = `${CONFIG.TELEGRAM_BASE}?url=${encodedText}`;
+
+            setTimeout(() => {
+                window.open(telegramUrl, '_blank');
+            }, 600);
         }
 
         function showToast() {
             elements.toast.classList.replace('opacity-0', 'opacity-100');
-            setTimeout(() => elements.toast.classList.replace('opacity-100', 'opacity-0'), 2000);
+            setTimeout(() => elements.toast.classList.replace('opacity-100', 'opacity-0'), 2500);
         }
 
         window.onload = fetchLatestRates;
